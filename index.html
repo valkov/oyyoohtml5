@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<meta charset='utf-8'>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.6.0.min.js"></script>
+        <script defer="defer">
+            
+            var Y_OFFSET_TO_START_BUILDING_WORD = 140;
+            var Y_OFFSET_FOR_WORD = 50;
+            
+            var stage = new Kinetic.Stage({
+                                          container: 'container',
+                                          width: 300,
+                                          height: 451
+                                          });
+                                          
+              var layer = new Kinetic.Layer();
+              var width = 300;
+              var height = 451;
+
+              var XOFFSET = 1;
+              var YOFFSET = 150;
+              
+              var x = XOFFSET;
+              var y = YOFFSET;
+              
+              //context.font = '30pt Arial';
+              var characters = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+
+              for(var i = 0; i <= 25;i++) {
+                  var randomCharacter = characters.charAt(Math.floor(Math.random() * characters.length));
+                  
+                  var letter = new Kinetic.Group ({
+                              x: x,
+                              y: y,
+                              draggable: true,
+                              dragBoundFunc: function(pos) {
+                                  var newY = pos.y < 30 ? 30 : pos.y;
+                                  posY = pos.y > height - width/5 ? height - width/5 : pos.y;
+                                                  
+                                  var newX = pos.x < 0 ? 0 : pos.x;
+                                  posX = pos.X > width - width/5 ? width - width/5 : pos.x;
+                                                  
+                                  return {
+                                      x: newX,
+                                      y: newY
+                                  };
+                              }
+                    });
+                    
+                    letter.originalX = x;
+                    letter.originalY = y;
+
+                    var rect = new Kinetic.Rect({
+                                            x: 0,
+                                            y: 0,
+                                            width: width/5,
+                                            height: width/5,
+                                            fill: '8ECBF2',
+                                            stroke: 'white',
+                                            strokeWidth: 0,
+                                            
+                                            });
+                    letter.add(rect);
+                    
+                    var simpleText = new Kinetic.Text({
+                                                      x: 15,
+                                                      y: 10,
+                                                      text: randomCharacter,
+                                                      fontSize: 40,
+                                                      fontFamily: 'Helvetica',
+                                                      fill: 'black',
+                                                      align: 'center'
+                                                      });
+                    letter.add(simpleText);
+                    
+                    layer.add(letter);
+                    
+                    //events
+                    letter.on('dragstart', function() {
+                        this.moveToTop();
+                        layer.draw();
+                    });
+                    
+                    letter.on('dragend', function() {
+                              var numFrames = 0;
+                              var l = this;
+
+                              var anim = new Kinetic.Animation(function(frame) {
+                                                               var SPEED = 6;
+                                                               
+                                                               var finalY = l.getPosition().y <= Y_OFFSET_TO_START_BUILDING_WORD ? Y_OFFSET_FOR_WORD : l.originalY;
+                                                               var used = finalY != l.originalY;
+                                                               var finalX = used ? 100 : l.originalX;
+                                                               
+                                                               var xDelta = (l.getPosition().x - finalX) / SPEED;
+                                                               var yDelta = (l.getPosition().y - finalY) / SPEED;
+                                                               
+                                                               l.setPosition(l.getPosition().x - xDelta, l.getPosition().y - yDelta);
+                                                               
+                                                               numFrames++;
+                                                               if(Math.round(l.getPosition().x) == finalX && Math.round(l.getPosition().y) == finalY) {
+                                                                  anim.stop();
+                                                               }
+
+                                                               }, layer);
+                              
+                              anim.start();
+                              
+                        
+                        //layer.draw();
+
+                    });
+                
+
+                  x += width/5;
+                  if(i % 5 == 0 && i != 0) {
+                      x = XOFFSET;
+                      y += width/5;
+                  }
+                  
+              }
+        
+              // add the layer to the stage
+              stage.add(layer);
+            </script>
+    </body>
+</html>
