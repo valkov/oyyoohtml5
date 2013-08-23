@@ -39,8 +39,9 @@
  </style>
 
 <div id="board" class="board">
+	<input type="submit" value="Clear" />
 <script>
-	var XOFFSET = 10;
+	var XOFFSET = 8;
 	var YOFFSET = 150;
 	
 	var x = XOFFSET;
@@ -49,17 +50,24 @@
 	var Y_OFFSET_TO_START_BUILDING_WORD = 140;
     var Y_OFFSET_FOR_WORD = 50;
 
-    var nextLetterXOffset = 20;
+    var nextLetterXOffset = 8;
 	
-	function putLetterInPlaceOrBack(l) {
+	function putLetterInPlaceOrBack(l, forceBack) {
         var SPEED = 10;
 		
 		var originalX = l.getAttribute('originalX');
 		var originalY = l.getAttribute('originalY');
 		
-        var finalY = l.offsetTop <= Y_OFFSET_TO_START_BUILDING_WORD ? Y_OFFSET_FOR_WORD : originalY;
-        l.used = finalY != originalY;
-
+        var finalY;
+		if(forceBack) {
+			finalY = originalY;
+			l.used = false;
+		}
+		else {
+			finalY = l.offsetTop <= Y_OFFSET_TO_START_BUILDING_WORD ? Y_OFFSET_FOR_WORD : originalY;
+			l.used = finalY != originalY;
+		}
+		
         if(l.used) {
             finalX = nextLetterXOffset;
             nextLetterXOffset += 60;//TODO read width
@@ -67,8 +75,8 @@
         else
         	finalX = originalX;
 
-        var xDelta = (l.offsetLeft - finalX) / SPEED;
-        var yDelta = (l.offsetTop - finalY) / SPEED;
+        var xDelta = Math.round((l.offsetLeft - finalX) / SPEED);
+        var yDelta = Math.round((l.offsetTop - finalY) / SPEED);
                     
 		function frame() {
 			l.style.left = l.offsetLeft -= xDelta;
@@ -76,6 +84,7 @@
 			
 			var passedX = xDelta > 0 ? Math.round(l.offsetLeft) <= finalX : Math.round(l.offsetLeft) >= finalX;
 			var passedY = yDelta > 0 ? Math.round(l.offsetTop) <= finalY : Math.round(l.offsetTop) >= finalY;
+			
             if(passedX && passedY) {
 				l.style.left = l.used ? finalX : originalX;
 				l.style.top = l.used ? finalY : originalY;
@@ -114,7 +123,7 @@
 				revertDuration: 2,
 				zIndex: 2,
 				stop: function (event, ui) {
-					putLetterInPlaceOrBack(this);
+					putLetterInPlaceOrBack(this, false);
 				}
 			});
 		
@@ -125,8 +134,27 @@
 			}
 		}
 	};
+	
+	function restoreBoard() {
+		nextLetterXOffset = 8;
+		for(var i = 1; i <= 25; i++) {
+			var currentLetter =	document.getElementById('letter' + i); 
+			if(currentLetter.used)
+				putLetterInPlaceOrBack(currentLetter, true);
+		}
+	}
+	
 	createBoard();
 	
+	//clear button
+	$(function() {
+	    $( "input[type=submit], a, button" )
+	      .button()
+	      .click(function( event ) {
+	        //event.preventDefault();
+				restoreBoard();
+	      });
+	  });
 	
 </script>
 </div>
