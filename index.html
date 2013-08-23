@@ -5,7 +5,7 @@
   <title>my tests</title>
 	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
-	<script src="jquery.ui.touch-punch.min.js"></script>
+	<script src="javascripts/jquery.ui.touch-punch.min.js"></script>
 </head>
 <body>
  
@@ -14,10 +14,8 @@
          width: 50px;
          height: 50px;
          background: #81BEF7;
-         padding: 0px;
-         padding-right: 0px;
+
          border: solid 1px black;
-         float: left;
      }
 
 	.board {
@@ -28,8 +26,6 @@
  }
  </style>
 
-
- 
 <div id="board" class="board">
 <script>
 	var XOFFSET = 0;
@@ -44,9 +40,10 @@
 		var currentLetter = $('#letter'+ i);
 		currentLetter.used = 0;
 		
-		currentLetter.css('position', "relative");
-		currentLetter.css('top', x);
-		currentLetter.css('left', 150);
+//		currentLetter.css('position', "relative");
+		currentLetter.css('left', x);
+		currentLetter.css('top', y);
+
 		console.log(currentLetter);
 		currentLetter.draggable();
 		
