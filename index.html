@@ -17,13 +17,28 @@
          border: solid 1px black;
          float: left;
      }
+
+	.board {
+		width: 500px;
+		height: 500px;
+		background: #F5F6CE;
+     }
  }
  </style>
+
+
  
-<div id="draggable" class="letterBlock">
-  <center><p>A</p></center>
+<div id="board" class="board">
+<script>
+	for(var i = 0; i < 5; i++) {
+		$('#board').append( "<div id='letter" + i + "' class='letterBlock'><center><p>A</p></center></div>" );
+		var currentLetter = $('#letter'+ i);
+		//console.log(currentLetter);
+		//currentLetter.style.left = '100px'; 
+		//currentLetter.style.top = '16px';
+		currentLetter.draggable();
+	}
+</script>
 </div>
- <script>$('#draggable').draggable();</script>
- 
 </body>
 </html>
