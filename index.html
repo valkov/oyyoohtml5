@@ -1,144 +1,29 @@
-<!DOCTYPE HTML>
-<meta charset='utf-8'>
-<html>
-    <head>
-        <style>
-            body {
-                margin: 0px;
-                padding: 0px;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="container"></div>
-        <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.6.0.min.js"></script>
-        <script defer="defer">
-            
-            var stage = new Kinetic.Stage({
-                                          container: 'container',
-                                          width: 640,
-                                          height: 1200
-                                          });
-                                          
-              var layer = new Kinetic.Layer();
-              
-              var width = 640;
-              var height = 1200;
-
-              var XOFFSET = 1;
-              var YOFFSET = 150;
-              
-              var x = XOFFSET;
-              var y = YOFFSET;
-              
-              var Y_OFFSET_TO_START_BUILDING_WORD = 140;
-              var Y_OFFSET_FOR_WORD = 50;
-              var nextLetterXOffset = 0;width/2 - width/5/2;
-              
-              var characters = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-
-              for(var i = 0; i <= 25;i++) {
-                  var randomCharacter = characters.charAt(Math.floor(Math.random() * characters.length));
-                  
-                  var letter = new Kinetic.Group ({
-                              x: x,
-                              y: y,
-                              draggable: true,
-                              dragBoundFunc: function(pos) {
-                                  var newY = pos.y < 30 ? 30 : pos.y;
-                                  posY = pos.y > height - width/5 ? height - width/5 : pos.y;
-                                                  
-                                  var newX = pos.x < 0 ? 0 : pos.x;
-                                  posX = pos.X > width - width/5 ? width - width/5 : pos.x;
-                                                  
-                                  return {
-                                      x: newX,
-                                      y: newY
-                                  };
-                              }
-                    });
-                    
-                    letter.originalX = x;
-                    letter.originalY = y;
-
-                    var rect = new Kinetic.Rect({
-                                            x: 0,
-                                            y: 0,
-                                            width: width/5,
-                                            height: width/5,
-                                            fill: '8ECBF2',
-                                            stroke: 'white',
-                                            strokeWidth: 0,
-                                            
-                                            });
-                    letter.add(rect);
-                    
-                    var simpleText = new Kinetic.Text({
-                                                      x: 15,
-                                                      y: 10,
-                                                      text: randomCharacter,
-                                                      fontSize: 40,
-                                                      fontFamily: 'Helvetica',
-                                                      fill: 'black',
-                                                      align: 'center'
-                                                      });
-                    letter.add(simpleText);
-                    
-                    layer.add(letter);
-                    
-                    //events
-                    letter.on('dragstart', function() {
-                        this.moveToTop();
-                        layer.draw();
-                    });
-                    
-                    var putLetterInPlaceOrBack = function() {
-                        var numFrames = 0;
-                        var l = this;
-                        
-                        var SPEED = 6;
-                        
-                        var finalY = l.getPosition().y <= Y_OFFSET_TO_START_BUILDING_WORD ? Y_OFFSET_FOR_WORD : l.originalY;
-                        l.used = finalY != l.originalY;
-                        
-                        if(l.used) {
-                            console.log(nextLetterXOffset);
-                            finalX = nextLetterXOffset;
-                            nextLetterXOffset += width/5;
-                        }
-                        else
-                        finalX = l.originalX;
-                        
-                        var xDelta = (l.getPosition().x - finalX) / SPEED;
-                        var yDelta = (l.getPosition().y - finalY) / SPEED;
-                        
-                        var anim = new Kinetic.Animation(function(frame) {
-                                                         
-                                                         l.setPosition(l.getPosition().x - xDelta, l.getPosition().y - yDelta);
-                                                         
-                                                         numFrames++;
-                                                         if(Math.round(l.getPosition().x) == finalX && Math.round(l.getPosition().y) == finalY) {
-                                                         anim.stop();
-                                                         }
-                                                         
-                                                         }, layer);
-                                                         
-                                                         anim.start();
-                                                         
-                    };
-                    letter.on('dragend', putLetterInPlaceOrBack);
-                
-
-                  x += width/5;
-                  if(i % 5 == 0 && i != 0) {
-                      x = XOFFSET;
-                      y += width/5;
-                  }
-                  
-              }
-        
-              // add the layer to the stage
-              stage.add(layer);
-            </script>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>my tests</title>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+</head>
+<body>
+ 
+ <style type="text/css">
+     .letterBlock {
+         width: 50px;
+         height: 50px;
+         background: #81BEF7;
+         padding: 0px;
+         padding-right: 0px;
+         border: solid 1px black;
+         float: left;
+     }
+ }
+ </style>
+ 
+<div id="draggable" class="letterBlock">
+  <center><p>A</p></center>
+</div>
+ <script>$('#draggable').draggable();</script>
+ 
+</body>
 </html>
