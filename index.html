@@ -14,7 +14,6 @@
          width: 50px;
          height: 50px;
          background: #81BEF7;
-
          border: solid 1px black;
      }
 
@@ -28,30 +27,29 @@
 
 <div id="board" class="board">
 <script>
-	var XOFFSET = 0;
+	var XOFFSET = 10;
 	var YOFFSET = 150;
 	var LETTER_WIDTH = 50;
 	
 	var x = XOFFSET;
 	var y = YOFFSET;
 
-	for(var i = 0; i < 25; i++) {
+	for(var i = 1; i <= 25; i++) {
 		$('#board').append( "<div id='letter" + i + "' class='letterBlock'><center><p>A</p></center></div>" );
 		var currentLetter = $('#letter'+ i);
 		currentLetter.used = 0;
 		
-//		currentLetter.css('position', "relative");
+		currentLetter.css('position', 'absolute');
 		currentLetter.css('left', x);
 		currentLetter.css('top', y);
 
-		console.log(currentLetter);
 		currentLetter.draggable();
 		
 		x += LETTER_WIDTH;
-		// if(i % 5 == 0 && i != 0) {
-		// 			x = XOFFSET;
-		// 			y += LETTER_WIDTH;
-		// 		}
+		if(i % 5 == 0 && i != 0) {
+			x = XOFFSET;
+			y += LETTER_WIDTH;
+		}
 		console.log(x + " " + y);
 	}
 </script>
