@@ -11,10 +11,14 @@
  
  <style type="text/css">
      .letterBlock {
-         width: 50px;
-         height: 50px;
-         background: #81BEF7;
-         border: solid 1px black;
+		width: 60px;
+		height: 60px;
+		background: #81BEF7;
+		border: solid 1px #F5F6CE;
+		z-index: 1;
+		font-family: Helvetica, sans-serif;
+		font-size: 30;
+		line-height: 0%;
      }
 
 	.board {
@@ -23,35 +27,107 @@
 		background: #F5F6CE;
      }
  }
+ 
+	.letterFont { 
+		font-family: Helvetica, sans-serif;
+	    font-size: 16;
+	    line-height: 2.5em;
+	}
+	.serifa {
+	 font-family: "Minion Web", Georgia, Palatino, "Times New Roman", serif
+	 }
  </style>
 
 <div id="board" class="board">
 <script>
 	var XOFFSET = 10;
 	var YOFFSET = 150;
-	var LETTER_WIDTH = 50;
 	
 	var x = XOFFSET;
 	var y = YOFFSET;
+	
+	var Y_OFFSET_TO_START_BUILDING_WORD = 140;
+    var Y_OFFSET_FOR_WORD = 50;
 
-	for(var i = 1; i <= 25; i++) {
-		$('#board').append( "<div id='letter" + i + "' class='letterBlock'><center><p>A</p></center></div>" );
-		var currentLetter = $('#letter'+ i);
-		currentLetter.used = 0;
+    var nextLetterXOffset = 20;
+	
+	function putLetterInPlaceOrBack(l) {
+        var SPEED = 10;
 		
-		currentLetter.css('position', 'absolute');
-		currentLetter.css('left', x);
-		currentLetter.css('top', y);
+		var originalX = l.getAttribute('originalX');
+		var originalY = l.getAttribute('originalY');
+		
+        var finalY = l.offsetTop <= Y_OFFSET_TO_START_BUILDING_WORD ? Y_OFFSET_FOR_WORD : originalY;
+        l.used = finalY != originalY;
 
-		currentLetter.draggable();
-		
-		x += LETTER_WIDTH;
-		if(i % 5 == 0 && i != 0) {
-			x = XOFFSET;
-			y += LETTER_WIDTH;
+        if(l.used) {
+            finalX = nextLetterXOffset;
+            nextLetterXOffset += 60;//TODO read width
+        }
+        else
+        	finalX = originalX;
+
+        var xDelta = (l.offsetLeft - finalX) / SPEED;
+        var yDelta = (l.offsetTop - finalY) / SPEED;
+                    
+		function frame() {
+			l.style.left = l.offsetLeft -= xDelta;
+			l.style.top = l.offsetTop -= yDelta;
+			
+			var passedX = xDelta > 0 ? Math.round(l.offsetLeft) <= finalX : Math.round(l.offsetLeft) >= finalX;
+			var passedY = yDelta > 0 ? Math.round(l.offsetTop) <= finalY : Math.round(l.offsetTop) >= finalY;
+            if(passedX && passedY) {
+				l.style.left = l.used ? finalX : originalX;
+				l.style.top = l.used ? finalY : originalY;
+				
+				if(l.used) {
+					l.style.background = '#FA5858';
+				}
+				else {
+					l.style.background = '#81BEF7';
+				}
+            	clearInterval(id);
+            }
+
 		}
-		console.log(x + " " + y);
-	}
+		var id = setInterval(frame, SPEED) // draw every 10ms
+    };
+
+
+    var createBoard = function() {
+		var characters = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+
+		for(var i = 1; i <= 25; i++) {
+			var randomCharacter = characters.charAt(Math.floor(Math.random() * characters.length));
+			$('#board').append( "<div id='letter" + i + "' class='letterBlock'><center><p>" + randomCharacter + "</p></center></div>" );
+			var currentLetter = $('#letter'+ i);
+			currentLetter.used = 0;
+		
+			currentLetter.css('position', 'absolute');
+			currentLetter.css('left', x);
+			currentLetter.css('top', y);
+			
+			currentLetter.attr('originalX', x);
+			currentLetter.attr('originalY', y);
+
+			currentLetter.draggable({
+				revertDuration: 2,
+				zIndex: 2,
+				stop: function (event, ui) {
+					putLetterInPlaceOrBack(this);
+				}
+			});
+		
+			x += parseInt(currentLetter.css('width'), 0);
+			if(i % 5 == 0 && i != 0) {
+				x = XOFFSET;
+				y += parseInt(currentLetter.css('width'), 0);
+			}
+		}
+	};
+	createBoard();
+	
+	
 </script>
 </div>
 </body>
