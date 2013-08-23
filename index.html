@@ -5,6 +5,7 @@
   <title>my tests</title>
 	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+	<script src="jquery.ui.touch-punch.min.js"></script>
 </head>
 <body>
  
@@ -31,11 +32,30 @@
  
 <div id="board" class="board">
 <script>
-	for(var i = 0; i < 5; i++) {
+	var XOFFSET = 0;
+	var YOFFSET = 150;
+	var LETTER_WIDTH = 50;
+	
+	var x = XOFFSET;
+	var y = YOFFSET;
+
+	for(var i = 0; i < 25; i++) {
 		$('#board').append( "<div id='letter" + i + "' class='letterBlock'><center><p>A</p></center></div>" );
 		var currentLetter = $('#letter'+ i);
 		currentLetter.used = 0;
+		
+		currentLetter.css('position', "relative");
+		currentLetter.css('top', x);
+		currentLetter.css('left', 150);
+		console.log(currentLetter);
 		currentLetter.draggable();
+		
+		x += LETTER_WIDTH;
+		// if(i % 5 == 0 && i != 0) {
+		// 			x = XOFFSET;
+		// 			y += LETTER_WIDTH;
+		// 		}
+		console.log(x + " " + y);
 	}
 </script>
 </div>
